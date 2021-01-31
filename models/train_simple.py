@@ -1,5 +1,3 @@
-import itertools
-
 import pandas as pd
 import ta
 import tensortrade.env.default as default
@@ -9,46 +7,60 @@ from tensortrade.oms.instruments import EUR, Instrument
 from tensortrade.oms.services.execution.simulated import execute_order
 from tensortrade.oms.wallets import Wallet, Portfolio
 
-from agent.A2C import A2C
+from agent.DQN import DQN
 
-MCPHY = Instrument('MCPHY', 2, 'Mcphy energy stock')
-symbol = 'MCPHY'
+symbol = 'ALO'
+ink = 'alstom'
+inst = Instrument(symbol, 2, 'Mcphy energy stock')
 
-data = pd.read_csv('../data/mcphy_15m_1mo.csv').drop('Datetime', axis=1)
+data = pd.read_csv('../data/alstom_1h_2y.csv')
 data = ta.add_all_ta_features(data, 'Open', 'High', 'Low', 'Close', 'Volume', fillna=True)
 data.columns = [symbol + ":" + name.lower() for name in data.columns]
 
-data_feed = DataFeed([
-    Stream.source(list(data[col]), dtype="float") for col in data.columns
+feed = DataFeed([
+    Stream.source(list(data[col]), dtype="float") for col in data.columns if col != f'{symbol}:date'
 ])
-exchange = Exchange("mcphy", service=execute_order)(
-    Stream.source(list(data['MCPHY:close'])).rename("EUR-MCPHY")
+feed.compile()
+
+exchange = Exchange(ink, service=execute_order)(
+    Stream.source(list(data[f'{symbol}:close'])).rename(f"EUR-{symbol}")
 )
+
+portfolio = Portfolio(EUR, [
+    Wallet(exchange, 3_000 * EUR),
+    Wallet(exchange, 0 * inst)
+])
+
 renderer_feed = DataFeed([
-    Stream.source(data[c].tolist(), dtype="float").rename(c) for c in data]
+    Stream.source(list(data["ALO:date"])).rename("date"),
+    Stream.source(list(data["ALO:open"]), dtype="float").rename("open"),
+    Stream.source(list(data["ALO:high"]), dtype="float").rename("high"),
+    Stream.source(list(data["ALO:low"]), dtype="float").rename("low"),
+    Stream.source(list(data["ALO:close"]), dtype="float").rename("close"),
+    Stream.source(list(data["ALO:volume"]), dtype="float").rename("volume")
+])
+
+env = default.create(
+    portfolio=portfolio,
+    action_scheme="managed-risk",
+    reward_scheme="risk-adjusted",
+    feed=feed,
+    renderer_feed=renderer_feed,
+    window_size=20
 )
+env.reset()
 
-best_agent_score = 0
-best_agent = None
-for n_steps, n_episodes in itertools.combinations([2, 5, 10, 20, 50, 100], 2):
-    portfolio = Portfolio(EUR, [
-        Wallet(exchange, 3_000 * EUR),
-        Wallet(exchange, 0 * MCPHY)
-    ])
-    env = default.create(
-        portfolio=portfolio,
-        action_scheme='managed-risk',
-        reward_scheme='risk-adjusted',
-        feed=data_feed,
-        renderer=default.renderers.PlotlyTradingChart(),
-        window_size=20
-    )
-    env.reset()
+agent = DQN(env)
+agent.train(n_steps=200, n_episodes=3, render_interval=200000)
+print('Net worth {}'.format(portfolio.net_worth))
 
-    agent = A2C(env)
-    agent.train(n_steps=n_steps, n_episodes=n_episodes)
-    print('Net worth {}'.format(portfolio.net_worth))
-    if portfolio.net_worth > best_agent_score:
-        best_agent_score = portfolio.net_worth
-        best_agent = agent
-        print('New best agent with {}'.format(best_agent_score))
+observation = env.reset()
+
+while True:
+    action = agent.get_action(observation)
+    observation, reward, done, info = env.step(action)
+    if done:
+        break
+
+env.render()
+env.save()
