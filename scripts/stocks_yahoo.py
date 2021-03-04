@@ -1,13 +1,7 @@
 import yfinance as yf
-import pandas as pd
 
-
-df_companies = pd.read_csv('data/companies_cac_40.csv')
-
-for code in df_companies['symbol'].values:
-    data = yf.Ticker('{}.PA'.format(code))
-    hist = data.history(period="max")
+data = yf.Ticker('kn.pa')
+hist = data.history(period='2y', interval='1h')
 
 # show actions (dividends, splits)
-print(msft)
-
+hist.to_csv('../data/banque/kn_1h_2d.csv')

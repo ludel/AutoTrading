@@ -1,3 +1,5 @@
+import itertools
+
 import numpy as np
 import tensorflow as tf
 from tensortrade.agents import DQNAgent, DQNTransition
@@ -5,13 +7,8 @@ from tensortrade.agents import ReplayMemory
 
 
 class DQN(DQNAgent):
-    def train(self,
-              n_steps: int = None,
-              n_episodes: int = None,
-              save_every: int = None,
-              save_path: str = None,
-              callback: callable = None,
-              **kwargs) -> float:
+    def train(self, n_steps: int = None, n_episodes: int = None, save_every: int = None, save_path: str = None,
+              callback: callable = None, cyclic_steps=True, **kwargs) -> float:
         batch_size: int = kwargs.get('batch_size', 128)
         discount_factor: float = kwargs.get('discount_factor', 0.9999)
         learning_rate: float = kwargs.get('learning_rate', 0.0001)
@@ -28,16 +25,20 @@ class DQN(DQNAgent):
         total_reward = 0
         stop_training = False
 
+        start_step = itertools.cycle(range(0, kwargs.get('max_exploration', 4000), n_steps))
         if n_steps and not n_episodes:
             n_episodes = np.iinfo(np.int32).max
 
         print('==== AGENT ID: {} ===='.format(self.id))
-
         while episode < n_episodes and not stop_training:
+            if cyclic_steps:
+                self.env.clock.start = next(start_step)
             state = self.env.reset()
             done = False
             steps_done = 0
-            print('== EPISODE ID ({}/{}): {} =='.format(episode + 1,n_episodes, self.env.episode_id))
+            print('== EPISODE ID ({}/{}): {}: cycle {} =='.format(
+                episode + 1, n_episodes, self.env.episode_id, self.env.clock.start
+            ))
 
             while not done:
                 threshold = eps_end + (eps_start - eps_end) * np.exp(-total_steps_done / eps_decay_steps)

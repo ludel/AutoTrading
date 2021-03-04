@@ -2,3 +2,6 @@ pandas
 numpy
 tensortrade==1.0.1b0
 ta
+gym
+seaborn
+matplotlib
