@@ -1,7 +1,8 @@
-pandas
-numpy
-tensortrade==1.0.1b0
 ta
 gym
 seaborn
 matplotlib
+stable-baselines
+pandas
+tensorflow==2.4
+torch

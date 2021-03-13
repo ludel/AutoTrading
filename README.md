@@ -4,17 +4,24 @@
 - https://ai.stackexchange.com/questions/10082/suitable-reward-function-for-trading-buy-and-sell-orders/10912
 - https://teddykoker.com/2019/06/trading-with-reinforcement-learning-in-python-part-ii-application/
 
+sharpe ration
+differential Sharpe ratio
+
 ## RRL
 - https://towardsdatascience.com/recurrent-neural-networks-by-example-in-python-ffd204f99470
 - http://cs229.stanford.edu/proj2006/Molina-StockTradingWithRecurrentReinforcementLearning.pdf
 - https://raghavgoyal14.github.io/assets/ML_project/Final%20Report.pdf
+- https://arxiv.org/pdf/1707.07338.pdf
 
 ## Online learning
 - https://en.wikipedia.org/wiki/Online_machine_learning
 
 ## Gradiant ascent
+- https://stackoverflow.com/questions/58593644/keras-gradient-ascent-using-k-gradients
 search
 
+## Keras
+- https://medium.com/@john.oh26/how-to-trade-stocks-using-keras-machine-learning-explained-in-plain-english-cef3b22a35e7
 
 ## source
 - https://www.omergold.com/stockTrading.pdf
@@ -35,3 +42,4 @@ search
 
 ## Idea
 - Visualisation : use buy and hold, cumulative return instead of marker
+- Gradiant ascent sur un recurrent network avec une reward de sharpe ration (differential Sharpe ratio)
