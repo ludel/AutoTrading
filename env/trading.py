@@ -15,8 +15,8 @@ class Actions(Enum):
 class TradingEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, all_df, initial_account, max_step, window_size, hold_bonus_increment=0.1, hold_bonus_start=-0.3,
-                 hold_bonus_max=3):
+    def __init__(self, all_df, initial_account, window_size, hold_bonus_increment=0.1, hold_bonus_start=0,
+                 hold_bonus_max=5):
         print('Setup new env ...')
         self.seed(42)
         self.all_df = all_df
@@ -28,7 +28,7 @@ class TradingEnv(gym.Env):
 
         self.initial_account = initial_account
         self.liquidity = initial_account
-        self.current_step = 0
+        self.current_step = window_size + 1
         self.total_reward = 0
         self.last_transaction_price = 0
         self.hold_bonus = hold_bonus_start
@@ -36,8 +36,6 @@ class TradingEnv(gym.Env):
         self.hold_bonus_increment = hold_bonus_increment
         self.hold_bonus_start = hold_bonus_start
 
-        self.max_step = max_step
-        self.end_tick = max_step
         self.window_size = window_size
         self.history = {}
 
@@ -45,21 +43,20 @@ class TradingEnv(gym.Env):
 
     def reset(self):
         self.df = random.choice(self.all_df)
-        self.current_step = random.randint(self.window_size, len(self.df) - (self.max_step + 1))
-        self.end_tick = self.current_step + self.max_step
+        self.current_step = random.randint(self.window_size + 1, len(self.df))
         self.total_reward = 0
         self.hold_bonus = self.hold_bonus_start
         self.last_transaction_price = 0
         self.action_owned = 0
         self.liquidity = self.initial_account
         self.history = {}
-        print(f'Reset Env - step {self.current_step} to {self.end_tick}')
+        print(f'Reset Env - step {self.current_step}')
         return self._get_observation()
 
     def step(self, action):
         self.current_step += 1
         observation = self._get_observation()
-        done = self.current_step == self.end_tick
+        done = self.current_step == len(self.df) - 1
         current_price = self.df.iloc[self.current_step]['Open']
         info = {'current price': current_price, 'last transaction': self.last_transaction_price,
                 'action': 'Ignore'}
@@ -117,7 +114,7 @@ class TradingEnv(gym.Env):
     def plot(self, plot_marker_index=True):
         plt.figure(figsize=(15, 7))
         X = self.history.keys()
-        first_price = self.df.iloc[self.current_step - self.max_step]['Open']
+        first_price = self.df.iloc[0]['Open']
         nb_init_actions = self.initial_account / first_price
         plt.plot(X, [nb_init_actions * i['current price'] for i in self.history.values()], 'k-', label='Buy and hold')
         plt.plot(X, [i['net'] for i in self.history.values()], 'k--', label='net worth')
