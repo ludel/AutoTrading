@@ -12,6 +12,7 @@ differential Sharpe ratio
 - http://cs229.stanford.edu/proj2006/Molina-StockTradingWithRecurrentReinforcementLearning.pdf
 - https://raghavgoyal14.github.io/assets/ML_project/Final%20Report.pdf
 - https://arxiv.org/pdf/1707.07338.pdf
+- https://towardsdatascience.com/using-reinforcement-learning-to-trade-bitcoin-for-massive-profit-b69d0e8f583b
 
 ## Online learning
 - https://en.wikipedia.org/wiki/Online_machine_learning

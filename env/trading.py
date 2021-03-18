@@ -15,7 +15,7 @@ class Actions(Enum):
 class TradingEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, all_df, initial_account, window_size, hold_bonus_increment=0.1, hold_bonus_start=0,
+    def __init__(self, all_df, initial_account, window_size, hold_bonus_increment=0.1, hold_bonus_start=-0.3,
                  hold_bonus_max=5):
         print('Setup new env ...')
         self.seed(42)
@@ -128,8 +128,8 @@ class TradingEnv(gym.Env):
             if v['action'] == 'Buy':
                 buy['y'].append(v['current price'] * nb_init_actions)
                 buy['x'].append(k)
-        plt.plot(sell['x'], sell['y'], 'r.', markersize=10)
-        plt.plot(buy['x'], buy['y'], 'g.', markersize=10)
+        plt.plot(sell['x'], sell['y'], 'rv', markersize=10)
+        plt.plot(buy['x'], buy['y'], 'g^', markersize=10)
 
         if plot_marker_index:
             for i in range(len(sell['x'])):
