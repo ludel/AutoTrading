@@ -34,13 +34,17 @@ search
 - https://stats.stackexchange.com/questions/57244/what-is-recurrent-reinforcement-learning
 - https://teddykoker.com/2019/06/trading-with-reinforcement-learning-in-python-part-ii-application/
 
+## Study summary
+- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7384672/
 
 ## data
 - https://www.kaggle.com/mmmarchetti/sentiment-analysis-on-financial-news
 - https://stocknewsapi.com/register
 - https://newsapi.org/
 - https://www.reddit.com/r/algotrading/comments/9dpxhm/looking_for_good_json_stock_news_api_feeds_free/
+- https://www.coindesk.com/fr/price/bitcoin
 
 ## Idea
 - Visualisation : use buy and hold, cumulative return instead of marker
 - Gradiant ascent sur un recurrent network avec une reward de sharpe ration (differential Sharpe ratio)
+- Utiliser des indices plus stable moins volatile
