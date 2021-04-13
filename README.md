@@ -43,8 +43,3 @@ search
 - https://newsapi.org/
 - https://www.reddit.com/r/algotrading/comments/9dpxhm/looking_for_good_json_stock_news_api_feeds_free/
 - https://www.coindesk.com/fr/price/bitcoin
-
-## Idea
-- Visualisation : use buy and hold, cumulative return instead of marker
-- Gradiant ascent sur un recurrent network avec une reward de sharpe ration (differential Sharpe ratio)
-- Utiliser des indices plus stable moins volatile
