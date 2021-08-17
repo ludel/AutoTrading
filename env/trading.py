@@ -133,7 +133,7 @@ class TradingEnv(gym.Env):
     def render_all(self):
         pprint(self.history)
 
-    def plot(self, plot_marker_index=True):
+    def plot(self, plot_marker=True, plot_marker_index=True):
         plt.figure(figsize=(15, 7))
         X = [h.step for h in self.history]
         first_step = self.history[0].step
@@ -144,24 +144,25 @@ class TradingEnv(gym.Env):
                  label='Buy and hold')
         plt.plot(X, [h.portfolio['net_worth'] for h in self.history], 'k--', label='net worth')
 
-        sell = {'x': [], 'y': []}
-        buy = {'x': [], 'y': []}
-        for history in self.history:
-            if history.action == 'Sell':
-                sell['y'].append(history.portfolio['current_price'] * nb_init_actions)
-                sell['x'].append(history.step)
-            if history.action == 'Buy':
-                buy['y'].append(history.portfolio['current_price'] * nb_init_actions)
-                buy['x'].append(history.step)
-        plt.plot(sell['x'], sell['y'], 'rv', markersize=10)
-        plt.plot(buy['x'], buy['y'], 'g^', markersize=10)
+        if plot_marker:
+            sell = {'x': [], 'y': []}
+            buy = {'x': [], 'y': []}
+            for history in self.history:
+                if history.action == 'Sell':
+                    sell['y'].append(history.portfolio['current_price'] * nb_init_actions)
+                    sell['x'].append(history.step)
+                if history.action == 'Buy':
+                    buy['y'].append(history.portfolio['current_price'] * nb_init_actions)
+                    buy['x'].append(history.step)
+            plt.plot(sell['x'], sell['y'], 'rv', markersize=10)
+            plt.plot(buy['x'], buy['y'], 'g^', markersize=10)
 
-        if plot_marker_index:
-            for i in range(len(sell['x'])):
-                plt.annotate(i, xy=(buy['x'][i], buy['y'][i] - 17), weight='heavy', horizontalalignment='center',
-                             verticalalignment='center', color='black', fontsize=7)
-                plt.annotate(i, xy=(sell['x'][i], sell['y'][i] - 17), weight='heavy', horizontalalignment='center',
-                             verticalalignment='center', color='black', fontsize=7)
+            if plot_marker_index:
+                for i in range(len(sell['x'])):
+                    plt.annotate(i, xy=(buy['x'][i], buy['y'][i] - 17), weight='heavy', horizontalalignment='center',
+                                 verticalalignment='center', color='black', fontsize=7)
+                    plt.annotate(i, xy=(sell['x'][i], sell['y'][i] - 17), weight='heavy', horizontalalignment='center',
+                                 verticalalignment='center', color='black', fontsize=7)
 
         plt.legend()
         plt.show()
