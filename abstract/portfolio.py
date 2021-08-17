@@ -20,8 +20,12 @@ class Portfolio:
 
 @dataclass
 class Action:
+    code: str
     current_price: float = 0.00
     owned: int = 0
+
+    def get_total_value(self):
+        return self.current_price * self.owned
 
 
 class ActionPortfolio(dict):
@@ -29,7 +33,7 @@ class ActionPortfolio(dict):
     def __init__(self, codes):
         super().__init__()
         for code in codes:
-            self[code] = Action()
+            self[code] = Action(code)
 
     def set_current_price(self, code, price):
         self[code].current_price = price
@@ -43,6 +47,9 @@ class ActionPortfolio(dict):
     def get_action_owned(self, code):
         return self[code].owned
 
+    def get_net_worth(self):
+        return sum(action.get_total_value() for action in self.values())
+
 
 @dataclass
 class ImprovedPortfolio:
@@ -53,7 +60,7 @@ class ImprovedPortfolio:
     def __post_init__(self):
         self.liquidity = self.initial_account
 
-    def init_action_portfolio(self, codes_companies):
+    def init_action_portfolio(self, codes_companies: str):
         self.action_portfolio = ActionPortfolio(codes_companies)
 
     def buy(self, code, quantity: int):
@@ -68,3 +75,10 @@ class ImprovedPortfolio:
         price_amount = self.action_portfolio.get_action_price(code) * quantity
         self.liquidity += price_amount
         self.action_portfolio.set_owned(code, quantity)
+
+    def set_action_price(self, code, price: float):
+        self.action_portfolio.set_current_price(code, price)
+
+    @property
+    def net_worth(self):
+        return self.liquidity + self.action_portfolio.get_net_worth()
