@@ -56,13 +56,16 @@ def custom_add_volatility_ta(df: pd.DataFrame, high: str, low: str, close: str):
 
 def read_csv(file):
     df = pd.read_csv(file).drop('Date', axis=1)
+    return add_feature(df)
+
+
+def add_feature(df):
     df = df[df['Open'] != 0]
     df = ta.add_volume_ta(df, 'High', 'Low', 'Close', 'Volume', fillna=True)
     df = ta.add_momentum_ta(df, 'High', 'Low', 'Close', 'Volume', fillna=True)
-    # df = ta.add_volatility_ta(df, 'High', 'Low', 'Close', fillna=True, colprefix='volatility')
+    df = ta.add_volatility_ta(df, 'High', 'Low', 'Close', fillna=True, colprefix='volatility')
     df = ta.add_trend_ta(df, 'High', 'Low', 'Close', fillna=True)
     df = ta.add_others_ta(df, 'Close', fillna=True)
-    df = custom_add_volatility_ta(df, 'High', 'Low', 'Close')
     return df
 
 
