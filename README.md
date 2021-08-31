@@ -26,6 +26,7 @@ search
 
 ## source
 - https://www.omergold.com/stockTrading.pdf
+- https://arxiv.org/pdf/2106.00123.pdf
 - https://www.quandl.com/databases/WIKIP/data
 - https://towardsdatascience.com/deep-reinforcement-learning-for-automated-stock-trading-f1dad0126a02
 - https://github.com/AminHP/gym-anytrading
