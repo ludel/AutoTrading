@@ -1,3 +1,5 @@
+from typing import Callable, Optional
+
 from dataclasses import dataclass, field
 
 
@@ -21,11 +23,14 @@ class Portfolio:
 @dataclass
 class Action:
     code: str
-    current_price: float = 0.00
+    price: float = 0.0
     owned: int = 0
 
     def get_total_value(self):
-        return self.current_price * self.owned
+        return self.price * self.owned
+
+    def __repr__(self):
+        return f"Action({self.code}, price={self.price}, owned={self.owned}, value={self.get_total_value()})"
 
 
 class ActionPortfolio(dict):
@@ -36,13 +41,13 @@ class ActionPortfolio(dict):
             self[code] = Action(code)
 
     def set_current_price(self, code, price):
-        self[code].current_price = price
+        self[code].price = price
 
     def set_owned(self, code, quantity):
         self[code].owned = quantity
 
     def get_action_price(self, code):
-        return self[code].current_price
+        return self[code].price
 
     def get_action_owned(self, code):
         return self[code].owned
@@ -50,18 +55,31 @@ class ActionPortfolio(dict):
     def get_net_worth(self):
         return sum(action.get_total_value() for action in self.values())
 
+    def export_prices(self):
+        return {v.code: v.price for v in self.values()}
+
+    def summary(self):
+        for key, value in self.items():
+            print(key, value, sep=' => ')
+
 
 @dataclass
 class ImprovedPortfolio:
     initial_account: float
     liquidity: float = field(init=False)
     action_portfolio: ActionPortfolio = field(init=False)
+    sell_callback: Optional[Callable] = None
+    buy_callback: Optional[Callable] = None
 
     def __post_init__(self):
         self.liquidity = self.initial_account
 
     def init_action_portfolio(self, codes_companies: str):
         self.action_portfolio = ActionPortfolio(codes_companies)
+
+    @property
+    def net_worth(self):
+        return self.liquidity + self.action_portfolio.get_net_worth()
 
     def buy(self, code, quantity: int):
         price_amount = self.action_portfolio.get_action_price(code) * quantity
@@ -70,15 +88,26 @@ class ImprovedPortfolio:
         self.liquidity -= price_amount
         self.action_portfolio.set_owned(code, quantity)
 
-    def sell(self, code, quantity: int):
-        assert self.action_portfolio.get_action_owned(code) >= quantity
-        price_amount = self.action_portfolio.get_action_price(code) * quantity
+        if self.buy_callback:
+            self.buy_callback(code, quantity, self)
+
+    def sell(self, code):
+        current_position = self.action_portfolio.get_action_owned(code)
+        price_amount = self.action_portfolio.get_action_price(code) * current_position
         self.liquidity += price_amount
-        self.action_portfolio.set_owned(code, quantity)
+        self.action_portfolio.set_owned(code, 0)
+
+        if self.sell_callback:
+            self.sell_callback(code, current_position, self)
 
     def set_action_price(self, code, price: float):
         self.action_portfolio.set_current_price(code, price)
 
-    @property
-    def net_worth(self):
-        return self.liquidity + self.action_portfolio.get_net_worth()
+    def get_action_price(self, code):
+        return self.action_portfolio.get_action_price(code)
+
+    def get_position(self, code):
+        return self.action_portfolio[code]
+
+    def summary(self):
+        print('Initial {} - Liquidity {} - Net Worth {}'.format(self.initial_account, self.liquidity, self.net_worth))

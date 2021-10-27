@@ -33,7 +33,8 @@ search
 - https://towardsdatascience.com/creating-a-custom-openai-gym-environment-for-stock-trading-be532be3910e
 - https://stats.stackexchange.com/questions/57244/what-is-recurrent-reinforcement-learning
 - https://teddykoker.com/2019/06/trading-with-reinforcement-learning-in-python-part-ii-application/
-
+- https://arxiv.org/pdf/1811.07522.pdf#cite.Data
+- 
 ## Study summary
 - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7384672/
 
