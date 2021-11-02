@@ -25,8 +25,8 @@ search
 - https://medium.com/@john.oh26/how-to-trade-stocks-using-keras-machine-learning-explained-in-plain-english-cef3b22a35e7
 
 ## source
+- pdf/GDQN-sortino.pdf /!\
 - https://www.omergold.com/stockTrading.pdf
-- https://arxiv.org/pdf/2106.00123.pdf
 - https://www.quandl.com/databases/WIKIP/data
 - https://towardsdatascience.com/deep-reinforcement-learning-for-automated-stock-trading-f1dad0126a02
 - https://github.com/AminHP/gym-anytrading
@@ -37,6 +37,7 @@ search
 - https://arxiv.org/pdf/1811.07522.pdf#cite.Data
 - 
 ## Study summary
+- https://arxiv.org/pdf/2106.00123.pdf /!\
 - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7384672/
 
 ## data
